@@ -38,20 +38,32 @@ interface BookingFlowProps {
 }
 
 export default function BookingFlow({ booking, setBooking }: BookingFlowProps) {
-  const closeAll = () => setBooking(INITIAL_BOOKING);
-  const goToCinemas = () => setBooking((prev) => ({ ...prev, step: "cinemas" }));
-  const goToSeats = (cinema: Cinema, showtime: ShowtimeSlot, date: string) => 
-    setBooking((prev) => ({ ...prev, step: "seats", cinema, showtime, date }));
-  const goToPayment = (seats: SelectedSeat[], totalPrice: number) =>
-    setBooking((prev) => ({ ...prev, step: "payment", selectedSeats: seats, totalPrice }));
-  const backToDetails = () => 
-    setBooking((prev) => ({ ...prev, step: "details", cinema: null, showtime: null, date: "" }));
-  const backToCinemas = () => 
-    setBooking((prev) => ({ ...prev, step: "cinemas", showtime: null }));
-  const backToSeats = () =>
-    setBooking((prev) => ({ ...prev, step: "seats", selectedSeats: [], totalPrice: 0 }));
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  if (!booking.step) return null;
+  const withTransition = (callback: () => void) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      callback();
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 50); // Small delay to let DOM render
+    }, 500); // Wait for curtain to drop
+  };
+
+  const closeAll = () => withTransition(() => setBooking(INITIAL_BOOKING));
+  const goToCinemas = () => withTransition(() => setBooking((prev) => ({ ...prev, step: "cinemas" })));
+  const goToSeats = (cinema: Cinema, showtime: ShowtimeSlot, date: string) => 
+    withTransition(() => setBooking((prev) => ({ ...prev, step: "seats", cinema, showtime, date })));
+  const goToPayment = (seats: SelectedSeat[], totalPrice: number) =>
+    withTransition(() => setBooking((prev) => ({ ...prev, step: "payment", selectedSeats: seats, totalPrice })));
+  const backToDetails = () => 
+    withTransition(() => setBooking((prev) => ({ ...prev, step: "details", cinema: null, showtime: null, date: "" })));
+  const backToCinemas = () => 
+    withTransition(() => setBooking((prev) => ({ ...prev, step: "cinemas", showtime: null })));
+  const backToSeats = () =>
+    withTransition(() => setBooking((prev) => ({ ...prev, step: "seats", selectedSeats: [], totalPrice: 0 })));
+
+  if (!booking.step && !isTransitioning) return null;
 
   return createPortal(
     <>
@@ -202,6 +214,25 @@ export default function BookingFlow({ booking, setBooking }: BookingFlowProps) {
             onBack={backToSeats}
             onClose={closeAll}
           />
+        )}
+      </AnimatePresence>
+
+      {/* ═════════════════ Cinematic Curtain Transition ═════════════════ */}
+      <AnimatePresence>
+        {isTransitioning && (
+          <motion.div
+            initial={{ top: "100%" }}
+            animate={{ top: "0%" }}
+            exit={{ top: "-100%" }}
+            transition={{ duration: 0.5, ease: [0.64, 0, 0.36, 1] }}
+            className="fixed inset-0 z-[999999] bg-brand-bg flex items-center justify-center pointer-events-auto"
+          >
+            <div className="flex flex-col items-center gap-4">
+              <span className="font-display font-bold text-2xl tracking-widest uppercase text-white/40 animate-pulse">
+                Cinema Redefined
+              </span>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </>,
