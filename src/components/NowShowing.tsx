@@ -210,7 +210,16 @@ export default function NowShowing() {
               <TiltCard movie={movie} onClick={() => openDetails(movie)} />
             </div>
           ))}
-      </div>
+        </div>
+
+        <div className="mt-16 flex justify-center">
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent("open-explore", { detail: { title: "Movies", type: "Category" } }))}
+            className="px-8 py-4 border border-brand-crimson/50 text-brand-crimson hover:bg-brand-crimson hover:text-white rounded-full font-medium tracking-widest uppercase text-sm transition-all duration-300"
+          >
+            View All Movies
+          </button>
+        </div>
       </div>
 
       <BookingFlow booking={booking} setBooking={setBooking} />

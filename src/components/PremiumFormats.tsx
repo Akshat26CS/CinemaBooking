@@ -2,7 +2,8 @@ import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, X as XIcon } from "lucide-react";
+import { createPortal } from "react-dom";
 
 const FORMATS = [
   { 
@@ -38,6 +39,22 @@ const FORMATS = [
 export default function PremiumFormats() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [selectedFormat, setSelectedFormat] = useState<typeof FORMATS[0] | null>(null);
+
+  // Lock scroll when modal is open
+  useEffect(() => {
+    if (selectedFormat) {
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
+  }, [selectedFormat]);
 
   useEffect(() => {
     let ctx = gsap.context(() => {
@@ -136,7 +153,9 @@ export default function PremiumFormats() {
                 {FORMATS[activeIndex].desc}
               </p>
               
-              <button className="flex items-center gap-3 text-sm uppercase tracking-widest font-medium text-white group/btn">
+              <button 
+                onClick={() => setSelectedFormat(FORMATS[activeIndex])}
+                className="flex items-center gap-3 text-sm uppercase tracking-widest font-medium text-white group/btn">
                 <span className="border-b border-transparent group-hover/btn:border-white transition-colors pb-1">
                   Explore Format
                 </span>
@@ -147,6 +166,77 @@ export default function PremiumFormats() {
         </div>
 
       </div>
+
+      {/* Modal Overlay */}
+      {createPortal(
+        <AnimatePresence>
+          {selectedFormat && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[9999] bg-brand-bg/90 backdrop-blur-xl flex items-center justify-center p-6"
+            >
+              <div className="absolute inset-0" onClick={() => setSelectedFormat(null)} />
+              
+              <motion.div 
+                initial={{ y: 20, scale: 0.95 }}
+                animate={{ y: 0, scale: 1 }}
+                exit={{ y: 20, scale: 0.95 }}
+                className="relative max-w-2xl w-full bg-brand-bg-alt border border-white/10 rounded-[2rem] p-8 sm:p-12 overflow-hidden shadow-2xl"
+              >
+                <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] ${selectedFormat.bgAccent} pointer-events-none opacity-50`} />
+                
+                <button 
+                  onClick={() => setSelectedFormat(null)}
+                  className="absolute top-6 right-6 p-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-brand-slate hover:text-white transition-colors z-10"
+                >
+                  <XIcon className="w-5 h-5" />
+                </button>
+
+                <div className={`text-xs tracking-widest uppercase font-mono mb-6 ${selectedFormat.accent} flex items-center gap-3`}>
+                  <span>Premium Format</span>
+                  <span className="w-8 h-[1px] bg-current opacity-30"></span>
+                </div>
+
+                <h3 className="font-display text-3xl sm:text-4xl font-bold text-white mb-6">
+                  {selectedFormat.name}
+                </h3>
+                
+                <p className="text-brand-slate text-lg leading-relaxed mb-8">
+                  {selectedFormat.desc}
+                </p>
+
+                <div className="p-6 rounded-2xl bg-black/40 border border-white/5 backdrop-blur-sm mb-8">
+                  <h4 className="text-sm font-medium text-white uppercase tracking-widest mb-4">Why choose this format?</h4>
+                  <ul className="flex flex-col gap-3 text-sm text-brand-slate">
+                    <li className="flex items-center gap-3">
+                      <span className={`w-1.5 h-1.5 rounded-full ${selectedFormat.accent.replace('text-', 'bg-')}`}></span>
+                      Unparalleled immersion and detail
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className={`w-1.5 h-1.5 rounded-full ${selectedFormat.accent.replace('text-', 'bg-')}`}></span>
+                      State-of-the-art audiovisual technology
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className={`w-1.5 h-1.5 rounded-full ${selectedFormat.accent.replace('text-', 'bg-')}`}></span>
+                      The ultimate cinematic experience
+                    </li>
+                  </ul>
+                </div>
+
+                <button 
+                  onClick={() => setSelectedFormat(null)}
+                  className="w-full py-4 rounded-full bg-white text-black font-medium text-sm tracking-widest uppercase hover:bg-white/90 transition-colors"
+                >
+                  Close
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </section>
   );
 }

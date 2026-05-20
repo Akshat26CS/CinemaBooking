@@ -25,6 +25,16 @@ export default function FiltersBar() {
     };
   }, [activeFilter]);
 
+  // Listen for custom event to open explore overlay from anywhere
+  useEffect(() => {
+    const handleOpenExplore = (e: Event) => {
+      const customEvent = e as CustomEvent<{ title: string; type: "Category" | "Format" | "Genre" }>;
+      setActiveFilter(customEvent.detail);
+    };
+    window.addEventListener("open-explore", handleOpenExplore);
+    return () => window.removeEventListener("open-explore", handleOpenExplore);
+  }, []);
+
   return (
     <>
       <div className="relative z-20 w-full bg-brand-bg-alt/80 border-y border-white/5 backdrop-blur-sm">
