@@ -1,11 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import FiltersBar from "./components/FiltersBar";
-import PremiumFormats from "./components/PremiumFormats";
-import NowShowing from "./components/NowShowing";
-import SeatTeaser from "./components/SeatTeaser";
-import ContactCTA from "./components/ContactCTA";
+const Hero = lazy(() => import("./components/Hero"));
+const FiltersBar = lazy(() => import("./components/FiltersBar"));
+const PremiumFormats = lazy(() => import("./components/PremiumFormats"));
+const NowShowing = lazy(() => import("./components/NowShowing"));
+const SeatTeaser = lazy(() => import("./components/SeatTeaser"));
+const ContactCTA = lazy(() => import("./components/ContactCTA"));
+const BookingFlow = lazy(() => import("./BookingFlow"));
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -48,12 +49,21 @@ export default function App() {
   return (
     <main className="w-full min-h-screen bg-brand-bg text-brand-text selection:bg-brand-crimson selection:text-white">
       <Navbar />
-      <Hero />
-      <FiltersBar />
-      <PremiumFormats />
-      <NowShowing />
-      <SeatTeaser />
-      <ContactCTA />
+      <Suspense fallback={null}><Hero /></Suspense>
+      <Suspense fallback={null}><FiltersBar /></Suspense>
+      <Suspense fallback={null}><PremiumFormats /></Suspense>
+      <Suspense fallback={null}><NowShowing /></Suspense>
+      <Suspense fallback={null}><SeatTeaser /></Suspense>
+      <Suspense fallback={null}><ContactCTA /></Suspense>
+      <Suspense fallback={null}><BookingFlow /></Suspense>
+      
+      {/* Example of prefetch trigger on interaction */}
+      <button 
+        onMouseEnter={() => import("./BookingFlow")} 
+        className="hidden"
+      >
+        Prefetch
+      </button>
     </main>
   );
 }

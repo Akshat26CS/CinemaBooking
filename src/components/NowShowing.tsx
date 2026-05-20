@@ -4,7 +4,10 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Clock } from "lucide-react";
 import { MOVIES } from "../data/movies";
-import BookingFlow, { BookingState, INITIAL_BOOKING } from "./BookingFlow";
+import { lazy, Suspense } from "react";
+import type { BookingState } from "./BookingFlow";
+import { INITIAL_BOOKING } from "./BookingFlow";
+const BookingFlow = lazy(() => import("./BookingFlow"));
 import ImageLoader from "./ImageLoader";
 
 function TiltCard({ movie, onClick }: { movie: typeof MOVIES[0] & { comingSoon?: boolean }, onClick: () => void }) {
@@ -96,7 +99,10 @@ function TiltCard({ movie, onClick }: { movie: typeof MOVIES[0] & { comingSoon?:
           </div>
           
           <div className="overflow-hidden">
-            <button className="w-full py-3 sm:py-4 border border-white/20 rounded-full font-medium text-sm tracking-widest uppercase bg-white/5 translate-y-[120%] group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out hover:bg-white hover:text-black hover:border-white">
+            <button
+              className="w-full py-3 sm:py-4 border border-white/20 rounded-full font-medium text-sm tracking-widest uppercase bg-white/5 translate-y-[120%] group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out hover:bg-white hover:text-black hover:border-white"
+              onMouseEnter={() => import("./BookingFlow")}
+            >
               {isComingSoon ? "View Details" : "View Details & Book"}
             </button>
           </div>
@@ -224,7 +230,9 @@ export default function NowShowing() {
         </div>
       </div>
 
-      <BookingFlow booking={booking} setBooking={setBooking} />
+        <Suspense fallback={null}>
+          <BookingFlow booking={booking} setBooking={setBooking} />
+        </Suspense>
     </section>
   );
 }
