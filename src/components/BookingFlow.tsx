@@ -50,7 +50,7 @@ export default function BookingFlow({ booking, setBooking }: BookingFlowProps) {
     }, 500); // Wait for curtain to drop
   };
 
-  const closeAll = () => withTransition(() => setBooking(INITIAL_BOOKING));
+  const closeAll = () => setBooking(INITIAL_BOOKING);
   const goToCinemas = () => withTransition(() => setBooking((prev) => ({ ...prev, step: "cinemas" })));
   const goToSeats = (cinema: Cinema, showtime: ShowtimeSlot, date: string) => 
     withTransition(() => setBooking((prev) => ({ ...prev, step: "seats", cinema, showtime, date })));
