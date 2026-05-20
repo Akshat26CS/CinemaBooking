@@ -9,20 +9,6 @@ export default function SeatTeaser() {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const rotationRef = useRef(0);
-  const [isVisible, setIsVisible] = useState(false);
-
-  // Only render 3D canvas when section is near viewport
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
-      { rootMargin: "200px" } // Start loading 200px before visible
-    );
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -61,24 +47,22 @@ export default function SeatTeaser() {
   return (
     <section id="seat-teaser" ref={containerRef} className="relative w-full h-screen bg-brand-bg flex items-center justify-center overflow-hidden">
       
-      {/* Absolute positioning for R3F Canvas — only render when visible */}
+      {/* Absolute positioning for R3F Canvas */}
       <div className="absolute inset-0 z-0">
-        {isVisible && (
-          <Canvas 
-            camera={{ position: [0, 8, 12], fov: 40 }}
-            dpr={[1, 1.25]}
-            gl={{ powerPreference: "high-performance", antialias: false, alpha: false }}
-          >
-            <color attach="background" args={["#0A0A0A"]} />
-            <ambientLight intensity={0.1} />
-            
-            <spotLight position={[0, 10, 0]} intensity={50} color="#F8FAFC" angle={0.6} penumbra={1} />
-            
-            <SeatScene rotationRef={rotationRef} />
-            
-            <Environment preset="night" />
-          </Canvas>
-        )}
+        <Canvas 
+          camera={{ position: [0, 8, 12], fov: 40 }}
+          dpr={[1, 1.25]}
+          gl={{ powerPreference: "high-performance", antialias: false, alpha: false }}
+        >
+          <color attach="background" args={["#0A0A0A"]} />
+          <ambientLight intensity={0.1} />
+          
+          <spotLight position={[0, 10, 0]} intensity={50} color="#F8FAFC" angle={0.6} penumbra={1} />
+          
+          <SeatScene rotationRef={rotationRef} />
+          
+          <Environment preset="night" />
+        </Canvas>
       </div>
 
       {/* Foreground UI overlay */}
