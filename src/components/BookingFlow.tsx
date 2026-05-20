@@ -221,11 +221,11 @@ export default function BookingFlow({ booking, setBooking }: BookingFlowProps) {
       <AnimatePresence>
         {isTransitioning && (
           <motion.div
-            initial={{ top: "100%" }}
-            animate={{ top: "0%" }}
-            exit={{ top: "-100%" }}
-            transition={{ duration: 0.5, ease: [0.64, 0, 0.36, 1] }}
-            className="fixed inset-0 z-[999999] bg-brand-bg flex items-center justify-center pointer-events-auto"
+            initial={{ y: "100%" }}
+            animate={{ y: "0%" }}
+            exit={{ y: "-100%" }}
+            transition={{ duration: 0.4, ease: [0.64, 0, 0.36, 1] }}
+            className="fixed inset-0 z-[999999] bg-brand-bg flex items-center justify-center pointer-events-auto will-change-transform"
           >
             <div className="flex flex-col items-center gap-4">
               <span className="font-display font-bold text-2xl tracking-widest uppercase text-white/40 animate-pulse">
