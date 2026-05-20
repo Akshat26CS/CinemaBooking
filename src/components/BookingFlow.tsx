@@ -5,6 +5,8 @@ import { Clock, X, Play, Users, Info, Ticket } from "lucide-react";
 import CinemaHalls from "./CinemaHalls";
 import SeatSelector from "./SeatSelector";
 import PaymentPage from "./PaymentPage";
+import ImageLoader from "./ImageLoader";
+import MagneticButton from "./MagneticButton";
 import type { Cinema, ShowtimeSlot } from "./CinemaHalls";
 import type { SelectedSeat } from "./PaymentPage";
 
@@ -83,10 +85,11 @@ export default function BookingFlow({ booking, setBooking }: BookingFlowProps) {
               <div className="flex flex-col md:flex-row">
                 {/* Image Section */}
                 <div className="w-full md:w-2/5 relative aspect-video md:aspect-[3/4]">
-                  <img 
+                  <ImageLoader 
                     src={booking.movie.image} 
                     alt={booking.movie.title} 
-                    className="absolute inset-0 w-full h-full object-cover"
+                    containerClassName="absolute inset-0 w-full h-full"
+                    className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-brand-bg-alt via-brand-bg-alt/50 to-transparent" />
                 </div>
@@ -136,12 +139,11 @@ export default function BookingFlow({ booking, setBooking }: BookingFlowProps) {
                         <Clock className="w-4 h-4" /> Coming Soon
                       </div>
                     ) : (
-                      <button 
-                        onClick={goToCinemas}
-                        className="flex-1 flex items-center justify-center gap-2 py-4 bg-brand-crimson hover:bg-brand-crimson/90 text-white rounded-full font-medium uppercase tracking-widest text-sm transition-all text-center shadow-[0_0_20px_rgba(225,29,72,0.3)] hover:shadow-[0_0_30px_rgba(225,29,72,0.5)] hover:scale-[1.02]"
-                      >
-                        <Ticket className="w-4 h-4" /> Book Now
-                      </button>
+                      <MagneticButton className="flex-1 w-full" onClick={goToCinemas}>
+                        <div className="flex items-center justify-center gap-2 py-4 bg-brand-crimson hover:bg-brand-crimson/90 text-white rounded-full font-medium uppercase tracking-widest text-sm transition-all text-center">
+                          <Ticket className="w-4 h-4" /> Book Now
+                        </div>
+                      </MagneticButton>
                     )}
                     {booking.movie.trailerLink && (
                       <a 

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, X as XIcon, CreditCard, Smartphone, Building2, ChevronRight, ShieldCheck, Clock, MapPin, Ticket, Check, Loader2 } from "lucide-react";
 import type { Cinema, ShowtimeSlot } from "./CinemaHalls";
+import MagneticButton from "./MagneticButton";
+import ImageLoader from "./ImageLoader";
 
 /* ─── Types ─── */
 export interface SelectedSeat {
@@ -204,7 +206,12 @@ export default function PaymentPage({ movie, cinema, showtime, date, seats, tota
             {/* ─── Booking Summary Card ─── */}
             <div className="bg-brand-bg-alt/60 border border-white/5 rounded-2xl p-4 sm:p-5">
               <div className="flex items-center gap-4">
-                <img src={movie.image} alt={movie.title} className="w-12 h-16 object-cover rounded-lg border border-white/10" />
+                <ImageLoader 
+                  src={movie.image} 
+                  alt={movie.title} 
+                  containerClassName="w-12 h-16 flex-shrink-0"
+                  className="w-full h-full object-cover rounded-lg border border-white/10" 
+                />
                 <div className="flex-1 min-w-0">
                   <h3 className="font-display font-bold text-white text-sm truncate">{movie.title}</h3>
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-[11px] text-brand-slate">
@@ -464,20 +471,20 @@ export default function PaymentPage({ movie, cinema, showtime, date, seats, tota
             <p className="text-xs text-brand-slate uppercase tracking-wider">Total Amount</p>
             <p className="text-xl font-display font-bold text-brand-gold">₹{finalAmount}</p>
           </div>
-          <button
-            onClick={handlePay}
-            disabled={!selectedMethod || isProcessing}
-            className="px-8 sm:px-10 py-3.5 bg-brand-crimson hover:bg-brand-crimson/90 text-white rounded-full font-medium uppercase tracking-widest text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            {isProcessing ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              <>Pay ₹{finalAmount}</>
-            )}
-          </button>
+          <MagneticButton disabled={!selectedMethod || isProcessing} onClick={handlePay}>
+            <div
+              className={`px-8 sm:px-10 py-3.5 bg-brand-crimson hover:bg-brand-crimson/90 text-white rounded-full font-medium uppercase tracking-widest text-sm transition-colors flex items-center gap-2 ${(!selectedMethod || isProcessing) ? 'opacity-40 cursor-not-allowed' : ''}`}
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>Pay ₹{finalAmount}</>
+              )}
+            </div>
+          </MagneticButton>
         </div>
       </div>
     </motion.div>

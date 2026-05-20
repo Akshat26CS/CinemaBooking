@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Clock } from "lucide-react";
 import { MOVIES } from "../data/movies";
 import BookingFlow, { BookingState, INITIAL_BOOKING } from "./BookingFlow";
+import ImageLoader from "./ImageLoader";
 
 function TiltCard({ movie, onClick }: { movie: typeof MOVIES[0] & { comingSoon?: boolean }, onClick: () => void }) {
   const isComingSoon = !!(movie as any).comingSoon;
@@ -60,11 +61,12 @@ function TiltCard({ movie, onClick }: { movie: typeof MOVIES[0] & { comingSoon?:
         className="absolute inset-0 rounded-2xl overflow-hidden bg-brand-bg-alt/50 border border-white/5 flex flex-col"
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
-        <img 
+        <ImageLoader 
           src={movie.image} 
           alt={movie.title}
+          containerClassName="absolute inset-0 w-full h-full"
+          className="w-full h-full object-cover opacity-60 group-hover:scale-105 group-hover:opacity-80 transition-all duration-500 ease-out will-change-transform"
           loading="lazy"
-          className="absolute inset-0 object-cover w-full h-full opacity-60 group-hover:scale-105 group-hover:opacity-80 transition-all duration-500 ease-out will-change-transform"
         />
         
         <div 
