@@ -46,8 +46,8 @@ export default function BookingFlow({ booking, setBooking }: BookingFlowProps) {
       callback();
       setTimeout(() => {
         setIsTransitioning(false);
-      }, 50); // Small delay to let DOM render
-    }, 500); // Wait for curtain to drop
+      }, 30);
+    }, 250);
   };
 
   const closeAll = () => setBooking(INITIAL_BOOKING);
@@ -74,7 +74,7 @@ export default function BookingFlow({ booking, setBooking }: BookingFlowProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-brand-bg/90 backdrop-blur-md"
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-brand-bg/95"
             onClick={closeAll}
             data-lenis-prevent
           >
@@ -224,7 +224,7 @@ export default function BookingFlow({ booking, setBooking }: BookingFlowProps) {
             initial={{ y: "100%" }}
             animate={{ y: "0%" }}
             exit={{ y: "-100%" }}
-            transition={{ duration: 0.4, ease: [0.64, 0, 0.36, 1] }}
+            transition={{ duration: 0.25, ease: [0.64, 0, 0.36, 1] }}
             className="fixed inset-0 z-[999999] bg-brand-bg flex items-center justify-center pointer-events-auto will-change-transform"
           >
             <div className="flex flex-col items-center gap-4">

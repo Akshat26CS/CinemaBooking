@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "title": "DHURANDHAR",
+    "formats": ["IMAX 2D", "4DX"],
+    "genres": ["Action", "Thriller", "Spy"],
+    "time": "2h 34m",
+    "image": "/posters/dhurandhar.jpg",
+    "synopsis": "A mysterious traveler infiltrates an underworld nexus in this high-octane spy action thriller directed by Aditya Dhar.",
+    "cast": ["Ranveer Singh", "Sanjay Dutt", "R. Madhavan", "Akshaye Khanna"],
+    "trailerLink": "https://www.youtube.com/watch?v=BKOVzHcjEIo"
+  },
+  {
+    "id": 2,
+    "title": "PROJECT HAIL MARY",
+    "formats": ["IMAX 2D", "Dolby Atmos"],
+    "genres": ["Sci-Fi", "Adventure", "Drama"],
+    "time": "2h 22m",
+    "image": "/posters/project-hail-mary.jpg",
+    "synopsis": "A lone astronaut must save Earth from disaster after waking up on a spaceship with no memory of how he got there, billions of miles from home.",
+    "cast": ["Ryan Gosling", "Sandra Bullock", "Barry Keoghan"],
+    "trailerLink": "https://www.youtube.com/watch?v=m08TxIsFTRI"
+  },
+  {
+    "id": 3,
+    "title": "DHURANDHAR: THE REVENGE",
+    "formats": ["IMAX 2D", "4DX"],
+    "genres": ["Action", "Thriller", "Drama"],
+    "time": "2h 55m",
+    "image": "/dhurandhar.jpg",
+    "synopsis": "An intelligence officer goes rogue to hunt down an international syndicate that destroyed his team, leading to a high-octane game of cat and mouse across borders.",
+    "cast": ["Ranveer Singh", "Sanjay Dutt", "R. Madhavan", "Akshaye Khanna"],
+    "trailerLink": "https://www.youtube.com/watch?v=NHk7scrb_9I"
+  },
+  {
+    "id": 4,
+    "title": "MICHAEL",
+    "formats": ["IMAX 2D", "Dolby Atmos"],
+    "genres": ["Drama", "Music", "Biography"],
+    "time": "2h 07m",
+    "image": "/posters/michael.jpg",
+    "synopsis": "The epic musical journey of Michael Jackson, from his early days as the lead of the Jackson 5 to his rise as the King of Pop.",
+    "cast": ["Jaafar Jackson", "Colman Domingo", "Nia Long", "Miles Teller"],
+    "trailerLink": "https://www.youtube.com/watch?v=3zOLzsbOleM"
+  },
+  {
+    "id": 5,
+    "title": "THE MANDALORIAN & GROGU",
+    "formats": ["IMAX 2D", "4DX"],
+    "genres": ["Action", "Sci-Fi", "Adventure"],
+    "time": "2h 12m",
+    "image": "/posters/mandalorian-and-grogu.jpg",
+    "synopsis": "The Mandalorian and Grogu cross paths with unexpected allies and enemies as they navigate the galaxy in this epic Star Wars adventure.",
+    "cast": ["Pedro Pascal", "Sigourney Weaver", "Jeremy Allen White"],
+    "trailerLink": "https://www.youtube.com/watch?v=uwild1rw7Aw"
+  },
+  {
+    "id": 6,
+    "title": "MORTAL KOMBAT II",
+    "formats": ["IMAX 2D", "4DX"],
+    "genres": ["Action", "Fantasy", "Sci-Fi"],
+    "time": "1h 56m",
+    "image": "/posters/mortal-kombat-ii.jpg",
+    "synopsis": "Earth's champions must unite for the ultimate tournament against Outworld's deadliest warriors in a battle for the fate of the universe.",
+    "cast": ["Karl Urban", "Hiroyuki Sanada", "Jessica McNamee", "Ludi Lin"],
+    "trailerLink": "https://www.youtube.com/watch?v=b24oG7qCwp4"
+  },
+  {
+    "id": 7,
+    "title": "Spider-Man: Brand New Day",
+    "formats": ["IMAX 2D", "Dolby Atmos"],
+    "genres": ["Action", "Adventure"],
+    "time": "2h 10m",
+    "image": "/posters/spider-man-brand-new-day.jpg",
+    "synopsis": "Peter Parker faces a brand new threat as the city adapts to a changed world.",
+    "cast": ["Tom Holland", "Zendaya", "Benedict Cumberbatch"],
+    "trailerLink": "",
+    "comingSoon": true
+  },
+  {
+    "id": 8,
+    "title": "Avengers: Doomsday",
+    "formats": ["IMAX 2D", "4DX"],
+    "genres": ["Action", "Sci-Fi"],
+    "time": "2h 30m",
+    "image": "/posters/avengers-doomsday.jpg",
+    "synopsis": "Earth's mightiest heroes face their greatest challenge yet as a doomsday threat emerges.",
+    "cast": ["Robert Downey Jr.", "Chris Evans", "Scarlett Johansson"],
+    "trailerLink": "",
+    "comingSoon": true
+  }
+]

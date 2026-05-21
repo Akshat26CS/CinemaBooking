@@ -9,6 +9,24 @@ export default function SeatTeaser() {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const rotationRef = useRef(0);
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Lazy-load the 3D canvas only when the section is near the viewport
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect(); // Once loaded, keep it mounted
+        }
+      },
+      { rootMargin: "200px" } // Start loading 200px before it's visible
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -49,20 +67,25 @@ export default function SeatTeaser() {
       
       {/* Absolute positioning for R3F Canvas */}
       <div className="absolute inset-0 z-0">
-        <Canvas 
-          camera={{ position: [0, 8, 12], fov: 40 }}
-          dpr={[1, 1.25]}
-          gl={{ powerPreference: "high-performance", antialias: false, alpha: false }}
-        >
-          <color attach="background" args={["#0A0A0A"]} />
-          <ambientLight intensity={0.1} />
-          
-          <spotLight position={[0, 10, 0]} intensity={50} color="#F8FAFC" angle={0.6} penumbra={1} />
-          
-          <SeatScene rotationRef={rotationRef} />
-          
-          <Environment preset="night" />
-        </Canvas>
+        {isVisible ? (
+          <Canvas 
+            camera={{ position: [0, 8, 12], fov: 40 }}
+            dpr={[1, 1.25]}
+            gl={{ powerPreference: "high-performance", antialias: false, alpha: false }}
+          >
+            <color attach="background" args={["#0A0A0A"]} />
+            <ambientLight intensity={0.1} />
+            
+            <spotLight position={[0, 10, 0]} intensity={50} color="#F8FAFC" angle={0.6} penumbra={1} />
+            
+            <SeatScene rotationRef={rotationRef} />
+            
+            <Environment preset="night" resolution={256} />
+          </Canvas>
+        ) : (
+          /* Placeholder while 3D loads */
+          <div className="w-full h-full bg-brand-bg" />
+        )}
       </div>
 
       {/* Foreground UI overlay */}

@@ -6,3 +6,12 @@ coverage/
 *.log
 .env*
 !.env.example
+
+.vercel
+
+check-tickets.cjs
+test-date.js
+test_aiven.js
+drop_tables.js
+init_aiven.js
+init_remote.js

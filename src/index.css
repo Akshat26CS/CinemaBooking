@@ -16,6 +16,10 @@
   --color-brand-orange: #F59E0B;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html, body {
   background-color: var(--color-brand-bg);
   color: var(--color-brand-text);
@@ -63,29 +67,8 @@ h1, h2, h3, h4, h5, h6, .font-display {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .hide-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
-/* Lenis Scroll Base CSS */
-html.lenis, html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-.lenis.lenis-smooth iframe {
-  pointer-events: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 @keyframes shimmer {
@@ -101,6 +84,15 @@ html.lenis, html.lenis body {
   transform: translateZ(0);
 }
 
+/* CSS-only tilt card */
+.tilt-card {
+  transition: transform 0.3s ease-out;
+  transform-style: preserve-3d;
+}
+.tilt-card:hover {
+  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) scale(1.02);
+}
+
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -108,9 +100,14 @@ html.lenis, html.lenis body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  html {
+    scroll-behavior: auto;
+  }
 }
 
-/* Isolate paint for heavy sections */
+/* Isolate paint for heavy sections — use content-visibility for offscreen optimization */
 section {
   contain: layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 100vh;
 }

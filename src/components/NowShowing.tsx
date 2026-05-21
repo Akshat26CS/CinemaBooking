@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Clock } from "lucide-react";
@@ -7,54 +6,17 @@ import { MOVIES } from "../data/movies";
 import BookingFlow, { BookingState, INITIAL_BOOKING } from "./BookingFlow";
 import ImageLoader from "./ImageLoader";
 
-function TiltCard({ movie, onClick }: { movie: typeof MOVIES[0] & { comingSoon?: boolean }, onClick: () => void }) {
+/* ─── Lightweight CSS-only TiltCard ─── */
+function TiltCard({ movie, onClick }: { movie: typeof MOVIES[number], onClick: () => void }) {
   const isComingSoon = !!(movie as any).comingSoon;
-  const ref = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
-  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
-
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["5deg", "-5deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-5deg", "5deg"]);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
-    
-    x.set(xPct);
-    y.set(yPct);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
 
   return (
-    <motion.div
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+    <div
       onClick={onClick}
-      style={{
-        rotateX,
-        rotateY,
-        transformStyle: "preserve-3d",
-      }}
-      className="relative w-full aspect-[3/4] group rounded-2xl cursor-pointer will-change-transform"
+      className="tilt-card relative w-full aspect-[3/4] group rounded-2xl cursor-pointer"
     >
       <div 
-        className={`absolute inset-0 bg-gradient-to-t ${movie.accent} to-transparent rounded-2xl opacity-0 group-hover:opacity-60 blur-xl transition-opacity duration-700`}
-        style={{ transform: "translateZ(-50px)" }}
+        className={`absolute inset-0 bg-gradient-to-t ${movie.accent} to-transparent rounded-2xl opacity-0 group-hover:opacity-60 blur-xl transition-opacity duration-700 pointer-events-none`}
       />
       
       <div 
@@ -69,12 +31,9 @@ function TiltCard({ movie, onClick }: { movie: typeof MOVIES[0] & { comingSoon?:
           loading="lazy"
         />
         
-        <div 
-          className="relative z-20 flex flex-col h-full justify-end p-6 md:p-8"
-          style={{ transform: "translateZ(30px)" }}
-        >
+        <div className="relative z-20 flex flex-col h-full justify-end p-6 md:p-8">
           <div className="flex items-center gap-2 text-[10px] sm:text-xs uppercase tracking-[0.2em] text-brand-slate mb-3">
-            <span className="px-2 py-0.5 border border-white/20 rounded bg-black/50 backdrop-blur-sm">{movie.format}</span>
+            <span className="px-2 py-0.5 border border-white/20 rounded bg-black/50">{movie.formats?.[0] || '2D'}</span>
             <span className="flex items-center gap-1"><Clock className="w-3 h-3"/> {movie.time}</span>
           </div>
           <h3 className="font-display font-medium text-2xl sm:text-3xl leading-tight text-white mb-6">
@@ -83,7 +42,7 @@ function TiltCard({ movie, onClick }: { movie: typeof MOVIES[0] & { comingSoon?:
           
           <div className="flex flex-wrap gap-2 mb-6">
             {isComingSoon ? (
-              <span className="text-xs font-mono bg-brand-crimson/20 border border-brand-crimson/40 text-brand-crimson px-3 py-1 rounded backdrop-blur-md">
+              <span className="text-xs font-mono bg-brand-crimson/20 border border-brand-crimson/40 text-brand-crimson px-3 py-1 rounded">
                 Coming Soon
               </span>
             ) : (
@@ -102,7 +61,7 @@ function TiltCard({ movie, onClick }: { movie: typeof MOVIES[0] & { comingSoon?:
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -146,7 +105,7 @@ export default function NowShowing() {
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);  // Run once
+  }, []);
 
   // Lock page scroll when any overlay is open
   useEffect(() => {
@@ -205,7 +164,7 @@ export default function NowShowing() {
 
         <div 
           ref={gridRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 perspective-[2000px]"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
         >
           {moviesToShow.map((movie) => (
             <div key={movie.id} className="grid-item">

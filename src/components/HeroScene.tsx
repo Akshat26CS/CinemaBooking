@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Float, MeshTransmissionMaterial, RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
@@ -37,6 +37,7 @@ function TicketModel() {
       <RoundedBox args={[2.5, 4, 0.1]} radius={0.1} smoothness={4} ref={meshRef}>
         <MeshTransmissionMaterial
           backside
+          resolution={128} // Lowered resolution to save memory & GPU
           samples={2}
           thickness={0.5}
           chromaticAberration={0.25}
@@ -57,24 +58,38 @@ function TicketModel() {
 }
 
 export default function HeroScene() {
+  const [visible, setVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { threshold: 0 } // Any part visible -> mount
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="absolute inset-0 z-0 pointer-events-none">
-      <Canvas 
-        camera={{ position: [0, 0, 8], fov: 45 }}
-        dpr={[1, 1.25]} 
-        gl={{ powerPreference: "high-performance", antialias: false, alpha: false }}
-      >
-        <color attach="background" args={["#0A0A0A"]} />
-        <ambientLight intensity={0.2} />
-        <spotLight position={[5, 5, 5]} angle={0.2} penumbra={1} intensity={60} color="#E11D48" />
-        <spotLight position={[-5, -5, 5]} angle={0.2} penumbra={1} intensity={60} color="#4F46E5" />
-        
-        {/* Subtle environment map for glass reflections */}
-        <Environment preset="city" // Use preset or empty color to let glass show purely the lights
-         />
-        
-        <TicketModel />
-      </Canvas>
+    <div ref={containerRef} className="absolute inset-0 z-0 pointer-events-none">
+      {visible && (
+        <Canvas 
+          camera={{ position: [0, 0, 8], fov: 45 }}
+          dpr={[1, 1.25]} 
+          gl={{ powerPreference: "high-performance", antialias: false, alpha: false }}
+        >
+          <color attach="background" args={["#0A0A0A"]} />
+          <ambientLight intensity={0.2} />
+          <spotLight position={[5, 5, 5]} angle={0.2} penumbra={1} intensity={60} color="#E11D48" />
+          <spotLight position={[-5, -5, 5]} angle={0.2} penumbra={1} intensity={60} color="#4F46E5" />
+          
+          <Environment preset="city" resolution={256} />
+          
+          <TicketModel />
+        </Canvas>
+      )}
     </div>
   );
 }

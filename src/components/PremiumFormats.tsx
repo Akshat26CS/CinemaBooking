@@ -135,7 +135,7 @@ export default function PremiumFormats() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="bg-black/60 backdrop-blur-md p-8 sm:p-12 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden w-full group"
+              className="bg-black/80 p-8 sm:p-12 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden w-full group"
             >
               <div className={`absolute -top-32 -right-32 w-64 h-64 rounded-full blur-[80px] ${FORMATS[activeIndex].bgAccent} transition-colors duration-500 pointer-events-none`} />
               
@@ -175,7 +175,7 @@ export default function PremiumFormats() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[9999] bg-brand-bg/90 backdrop-blur-xl flex items-center justify-center p-6"
+              className="fixed inset-0 z-[9999] bg-brand-bg/95 flex items-center justify-center p-6"
             >
               <div className="absolute inset-0" onClick={() => setSelectedFormat(null)} />
               
