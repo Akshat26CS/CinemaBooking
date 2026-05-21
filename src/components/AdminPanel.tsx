@@ -251,7 +251,7 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
                               )}
                             </div>
                             <button
-                              onClick={() => deleteMovie(movie.id)}
+                              onClick={() => deleteEntity('movie', movie.id)}
                               className="p-2 rounded-lg hover:bg-brand-crimson/20 text-brand-slate hover:text-brand-crimson transition-colors flex-shrink-0"
                             >
                               <Trash2 className="w-4 h-4" />
