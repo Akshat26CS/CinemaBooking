@@ -6,6 +6,7 @@ import {
   Plus, Trash2, Edit3, Users, Ticket, DollarSign,
   ChevronRight, Loader2, Shield, Calendar, Globe, User
 } from 'lucide-react';
+import { GenericAdminModal } from './AdminModals';
 
 interface AdminPanelProps {
   open: boolean;
@@ -95,13 +96,29 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
     }
   };
 
-  const deleteMovie = async (id: number) => {
-    if (!confirm('Delete this movie?')) return;
+  const [modalConfig, setModalConfig] = useState<{isOpen: boolean, type: string, title: string, fields: any[], endpoint: string} | null>(null);
+
+  const handleModalSubmit = async (data: any) => {
+    if (!modalConfig) return;
+    const res = await fetch(modalConfig.endpoint, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Request failed');
+    }
+    fetchData();
+  };
+
+  const deleteEntity = async (type: string, id: number | string) => {
+    if (!confirm(`Are you sure you want to delete this ${type}? This action cannot be undone.`)) return;
     try {
-      await fetch(`/api/admin/movies/${id}`, { method: 'DELETE', headers });
+      await fetch(`/api/admin/${type}s/${id}`, { method: 'DELETE', headers });
       fetchData();
     } catch (err) {
-      console.error('Delete error:', err);
+      console.error(`Delete ${type} error:`, err);
     }
   };
 
@@ -214,6 +231,7 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between mb-6">
                       <h2 className="font-display font-bold text-xl text-white">All Movies ({movies.length})</h2>
+                      <button onClick={() => setModalConfig({isOpen: true, type: 'movie', title: 'Add Movie', endpoint: '/api/admin/movies', fields: [ {name: 'title', label: 'Title', type: 'text', required: true}, {name: 'description', label: 'Description', type: 'text'}, {name: 'stars', label: 'Stars (Pipe-separated)', type: 'text'}, {name: 'language', label: 'Language', type: 'text'}, {name: 'duration', label: 'Duration (e.g. 2h 30m)', type: 'text'}, {name: 'image', label: 'Image URL', type: 'text'}, {name: 'genre', label: 'Genre', type: 'text'}, {name: 'formats', label: 'Formats', type: 'text'}, {name: 'trailerLink', label: 'Trailer URL', type: 'text'}, {name: 'comingSoon', label: 'Coming Soon', type: 'checkbox'} ]})} className="flex items-center gap-2 px-4 py-2 bg-brand-crimson/20 text-brand-crimson hover:bg-brand-crimson hover:text-white rounded-lg transition-colors text-sm font-medium"><Plus className="w-4 h-4"/> Add Movie</button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {movies.map((movie) => (
@@ -248,7 +266,10 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
                 {/* Theatres */}
                 {activeTab === 'theatres' && (
                   <div className="space-y-4">
-                    <h2 className="font-display font-bold text-xl text-white mb-6">All Theatres ({theatres.length})</h2>
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="font-display font-bold text-xl text-white">All Theatres ({theatres.length})</h2>
+                      <button onClick={() => setModalConfig({isOpen: true, type: 'theatre', title: 'Add Theatre', endpoint: '/api/admin/theatres', fields: [ {name: 'name', label: 'Theatre Name', type: 'text', required: true}, {name: 'location', label: 'Location', type: 'text', required: true} ]})} className="flex items-center gap-2 px-4 py-2 bg-brand-crimson/20 text-brand-crimson hover:bg-brand-crimson hover:text-white rounded-lg transition-colors text-sm font-medium"><Plus className="w-4 h-4"/> Add Theatre</button>
+                    </div>
                     {theatres.map((theatre) => (
                       <div
                         key={theatre.id}
@@ -259,9 +280,12 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
                             <h3 className="font-display font-semibold text-white">{theatre.name}</h3>
                             <p className="text-xs text-brand-slate mt-0.5">{theatre.location}</p>
                           </div>
-                          <span className="text-xs bg-white/5 px-3 py-1 rounded-full text-brand-slate border border-white/5">
-                            {theatre.screens?.length || 0} screens
-                          </span>
+                          <div className="flex items-center gap-3">
+                            <span className="text-xs bg-white/5 px-3 py-1 rounded-full text-brand-slate border border-white/5">
+                              {theatre.screens?.length || 0} screens
+                            </span>
+                            <button onClick={() => deleteEntity('theatre', theatre.id)} className="p-2 bg-brand-bg hover:bg-brand-crimson/20 text-brand-slate hover:text-brand-crimson rounded-lg border border-white/5 transition-colors"><Trash2 className="w-4 h-4"/></button>
+                          </div>
                         </div>
                         {theatre.screens && theatre.screens.length > 0 && (
                           <div className="flex flex-wrap gap-2 mt-2">
@@ -293,6 +317,7 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
                             <th className="text-left py-3 px-4 text-xs uppercase tracking-widest text-brand-slate font-medium">Date & Time</th>
                             <th className="text-left py-3 px-4 text-xs uppercase tracking-widest text-brand-slate font-medium">Seat</th>
                             <th className="text-right py-3 px-4 text-xs uppercase tracking-widest text-brand-slate font-medium">Price</th>
+                            <th className="py-3 px-4"></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -310,6 +335,9 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
                               </td>
                               <td className="py-3 px-4 text-brand-slate font-mono">{b.Seat_No}</td>
                               <td className="py-3 px-4 text-brand-gold text-right font-medium">₹{b.Price}</td>
+                              <td className="py-3 px-4 text-right">
+                                <button onClick={() => deleteEntity('booking', b.Ticket_No)} className="p-2 hover:bg-brand-crimson/20 text-brand-slate hover:text-brand-crimson rounded-lg transition-colors"><Trash2 className="w-4 h-4"/></button>
+                              </td>
                             </tr>
                             );
                           })}
@@ -333,6 +361,7 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
                             <th className="text-left py-3 px-4 text-xs uppercase tracking-widest text-brand-slate font-medium">Phone</th>
                             <th className="text-left py-3 px-4 text-xs uppercase tracking-widest text-brand-slate font-medium">Age</th>
                             <th className="text-left py-3 px-4 text-xs uppercase tracking-widest text-brand-slate font-medium">Joined</th>
+                            <th className="py-3 px-4"></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -344,6 +373,9 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
                               <td className="py-3 px-4 text-brand-slate">{c.Mobile_No || '-'}</td>
                               <td className="py-3 px-4 text-brand-slate">{c.Age || '-'}</td>
                               <td className="py-3 px-4 text-brand-slate">{new Date(c.CreatedAt).toLocaleDateString()}</td>
+                              <td className="py-3 px-4 text-right">
+                                <button onClick={() => deleteEntity('customer', c.Customer_ID)} className="p-2 hover:bg-brand-crimson/20 text-brand-slate hover:text-brand-crimson rounded-lg transition-colors"><Trash2 className="w-4 h-4"/></button>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -355,7 +387,10 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
                 {/* Admins */}
                 {activeTab === 'admins' && (
                   <div className="space-y-4">
-                    <h2 className="font-display font-bold text-xl text-white mb-6">Administrators ({admins.length})</h2>
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="font-display font-bold text-xl text-white">Administrators ({admins.length})</h2>
+                      <button onClick={() => setModalConfig({isOpen: true, type: 'admin', title: 'Add Admin', endpoint: '/api/admin/admins', fields: [ {name: 'name', label: 'Name', type: 'text', required: true}, {name: 'email', label: 'Email', type: 'text', required: true}, {name: 'password', label: 'Password', type: 'password', required: true} ]})} className="flex items-center gap-2 px-4 py-2 bg-brand-crimson/20 text-brand-crimson hover:bg-brand-crimson hover:text-white rounded-lg transition-colors text-sm font-medium"><Plus className="w-4 h-4"/> Add Admin</button>
+                    </div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
@@ -365,6 +400,7 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
                             <th className="text-left py-3 px-4 text-xs uppercase tracking-widest text-brand-slate font-medium">Email</th>
                             <th className="text-left py-3 px-4 text-xs uppercase tracking-widest text-brand-slate font-medium">Role</th>
                             <th className="text-left py-3 px-4 text-xs uppercase tracking-widest text-brand-slate font-medium">Added</th>
+                            <th className="py-3 px-4"></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -378,6 +414,9 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
                               <td className="py-3 px-4 text-brand-slate">{a.Email}</td>
                               <td className="py-3 px-4 text-brand-slate uppercase text-[10px] tracking-wider"><span className="px-2 py-1 bg-white/5 rounded border border-white/10">{a.Admin_Role}</span></td>
                               <td className="py-3 px-4 text-brand-slate">{new Date(a.CreatedAt).toLocaleDateString()}</td>
+                              <td className="py-3 px-4 text-right">
+                                <button onClick={() => deleteEntity('admin', a.Admin_ID)} className="p-2 hover:bg-brand-crimson/20 text-brand-slate hover:text-brand-crimson rounded-lg transition-colors"><Trash2 className="w-4 h-4"/></button>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -389,7 +428,10 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
                 {/* Shows */}
                 {activeTab === 'shows' && (
                   <div className="space-y-4">
-                    <h2 className="font-display font-bold text-xl text-white mb-6">Scheduled Shows ({shows.length})</h2>
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="font-display font-bold text-xl text-white">Scheduled Shows ({shows.length})</h2>
+                      <button onClick={() => setModalConfig({isOpen: true, type: 'show', title: 'Schedule Show', endpoint: '/api/admin/shows', fields: [ {name: 'movieId', label: 'Movie ID', type: 'number', required: true}, {name: 'screenNo', label: 'Screen Number', type: 'number', required: true}, {name: 'showDate', label: 'Show Date (YYYY-MM-DD)', type: 'date', required: true}, {name: 'startTime', label: 'Start Time (HH:MM)', type: 'time', required: true}, {name: 'endTime', label: 'End Time (HH:MM)', type: 'time'} ]})} className="flex items-center gap-2 px-4 py-2 bg-brand-crimson/20 text-brand-crimson hover:bg-brand-crimson hover:text-white rounded-lg transition-colors text-sm font-medium"><Plus className="w-4 h-4"/> Add Show</button>
+                    </div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
@@ -399,6 +441,7 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
                             <th className="text-left py-3 px-4 text-xs uppercase tracking-widest text-brand-slate font-medium">Movie</th>
                             <th className="text-left py-3 px-4 text-xs uppercase tracking-widest text-brand-slate font-medium">Time</th>
                             <th className="text-left py-3 px-4 text-xs uppercase tracking-widest text-brand-slate font-medium">Theatre & Screen</th>
+                            <th className="py-3 px-4"></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -409,6 +452,9 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
                               <td className="py-3 px-4 text-brand-slate font-medium">{s.Movie_Title}</td>
                               <td className="py-3 px-4 text-brand-slate whitespace-nowrap">{s.Show_starttime.slice(0,5)} - {s.Show_endtime.slice(0,5)}</td>
                               <td className="py-3 px-4 text-brand-slate">{s.Theatre_Name} <span className="text-xs opacity-60">({s.Screen_Name})</span></td>
+                              <td className="py-3 px-4 text-right">
+                                <button onClick={() => deleteEntity('show', s.Show_ID)} className="p-2 hover:bg-brand-crimson/20 text-brand-slate hover:text-brand-crimson rounded-lg transition-colors"><Trash2 className="w-4 h-4"/></button>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -450,6 +496,13 @@ export default function AdminPanel({ open, onClose, token }: AdminPanelProps) {
         </div>
         </motion.div>
       )}
+      <GenericAdminModal
+        isOpen={modalConfig?.isOpen || false}
+        onClose={() => setModalConfig(null)}
+        title={modalConfig?.title || ''}
+        fields={modalConfig?.fields || []}
+        onSubmit={handleModalSubmit}
+      />
     </AnimatePresence>,
     document.body
   );

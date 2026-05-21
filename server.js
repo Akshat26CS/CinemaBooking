@@ -954,7 +954,84 @@ app.get('/api/admin/website', requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
+// Admin: Delete theatre
+app.delete('/api/admin/theatres/:id', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM Theatre WHERE Theatre_ID = ?', [req.params.id]);
+    res.json({ message: 'Theatre deleted' });
+  } catch (err) {
+    console.error('Admin delete theatre error:', err);
+    res.status(500).json({ error: 'Failed to delete theatre' });
+  }
+});
 
+// Admin: Delete show
+app.delete('/api/admin/shows/:id', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM MovieShow WHERE Show_ID = ?', [req.params.id]);
+    res.json({ message: 'Show deleted' });
+  } catch (err) {
+    console.error('Admin delete show error:', err);
+    res.status(500).json({ error: 'Failed to delete show' });
+  }
+});
+
+// Admin: Delete customer
+app.delete('/api/admin/customers/:id', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM Customer WHERE Customer_ID = ?', [req.params.id]);
+    res.json({ message: 'Customer deleted' });
+  } catch (err) {
+    console.error('Admin delete customer error:', err);
+    res.status(500).json({ error: 'Failed to delete customer' });
+  }
+});
+
+// Admin: Delete booking
+app.delete('/api/admin/bookings/:id', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM Tickets WHERE Ticket_No = ?', [req.params.id]);
+    res.json({ message: 'Booking deleted' });
+  } catch (err) {
+    console.error('Admin delete booking error:', err);
+    res.status(500).json({ error: 'Failed to delete booking' });
+  }
+});
+
+// Admin: Add admin
+app.post('/api/admin/admins', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const bcrypt = require('bcryptjs');
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+    
+    // Default website ID to 1 if BookingWebsite has one
+    let websiteId = 1; 
+    const [result] = await pool.query(
+      'INSERT INTO Admin (Admin_name, Email, PasswordSalt, PasswordHash, Website_ID) VALUES (?, ?, ?, ?, ?)',
+      [name, email, salt, hash, websiteId]
+    );
+    res.json({ id: result.insertId, message: 'Admin added' });
+  } catch (err) {
+    console.error('Admin add admin error:', err);
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
+    res.status(500).json({ error: 'Failed to add admin' });
+  }
+});
+
+// Admin: Delete admin
+app.delete('/api/admin/admins/:id', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM Admin WHERE Admin_ID = ?', [req.params.id]);
+    res.json({ message: 'Admin deleted' });
+  } catch (err) {
+    console.error('Admin delete admin error:', err);
+    res.status(500).json({ error: 'Failed to delete admin' });
+  }
+});
 
 // Admin: Get dashboard stats
 app.get('/api/admin/stats', requireAuth, requireAdmin, async (req, res) => {
