@@ -9,6 +9,7 @@ import BookingFlow, { BookingState, INITIAL_BOOKING } from "./BookingFlow";
 import AuthModal, { AuthUser } from "./AuthModal";
 import AdminPanel from "./AdminPanel";
 import LocationModal from "./LocationModal";
+import MyBookingsModal from "./MyBookingsModal";
 
 gsap.registerPlugin(ScrollToPlugin);
 
@@ -26,6 +27,7 @@ export default function Navbar() {
   });
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isBookingsOpen, setIsBookingsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   
   // Location state
@@ -281,6 +283,22 @@ export default function Navbar() {
                         </button>
                       )}
 
+                      {/* My Bookings */}
+                      <button
+                        onClick={() => {
+                          setIsBookingsOpen(true);
+                          setIsUserMenuOpen(false);
+                        }}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-white hover:bg-white/10 rounded-xl transition-all duration-200"
+                      >
+                        <div className="w-7 h-7 rounded-lg bg-brand-indigo/10 flex items-center justify-center flex-shrink-0">
+                          <svg className="w-4 h-4 text-brand-indigo" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                          </svg>
+                        </div>
+                        <span className="font-medium">My Bookings</span>
+                      </button>
+
                       {/* Logout */}
                       <button
                         onClick={handleLogout}
@@ -328,16 +346,25 @@ export default function Navbar() {
       </AnimatePresence>
 
       {/* Auth Modal */}
-      <AuthModal
-        open={isAuthOpen}
+      <AuthModal 
+        open={isAuthOpen} 
         onClose={() => setIsAuthOpen(false)}
         onSuccess={handleAuthSuccess}
       />
 
       {/* Admin Panel */}
-      <AdminPanel
-        open={isAdminOpen}
-        onClose={() => setIsAdminOpen(false)}
+      {currentUser && currentUser.role === 'admin' && (
+        <AdminPanel
+          open={isAdminOpen}
+          onClose={() => setIsAdminOpen(false)}
+          token={authToken}
+        />
+      )}
+
+      {/* My Bookings Modal */}
+      <MyBookingsModal
+        isOpen={isBookingsOpen}
+        onClose={() => setIsBookingsOpen(false)}
         token={authToken}
       />
     </nav>
