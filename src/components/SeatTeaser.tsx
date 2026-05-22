@@ -63,7 +63,7 @@ export default function SeatTeaser() {
   }, []);
 
   return (
-    <section id="seat-teaser" ref={containerRef} className="relative w-full h-screen bg-brand-bg flex items-center justify-center overflow-hidden">
+    <section id="seat-teaser" ref={containerRef} className="relative w-full h-[100dvh] bg-brand-bg flex flex-col justify-end md:justify-center overflow-hidden pb-20 md:pb-0">
       
       {/* Absolute positioning for R3F Canvas */}
       <div className="absolute inset-0 z-0">
@@ -91,7 +91,7 @@ export default function SeatTeaser() {
       {/* Foreground UI overlay */}
       <div 
         ref={textRef}
-        className="relative z-10 w-full max-w-7xl mx-auto px-6 pointer-events-none mt-[60vh] md:mt-0 flex flex-col items-center md:items-start text-center md:text-left"
+        className="relative z-10 w-full max-w-7xl mx-auto px-6 pointer-events-none flex flex-col items-center md:items-start text-center md:text-left"
       >
         <h2 className="font-display font-bold text-4xl sm:text-6xl md:text-7xl uppercase tracking-tighter leading-tight">
           Visual. <br />
