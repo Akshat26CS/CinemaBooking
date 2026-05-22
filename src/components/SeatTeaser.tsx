@@ -91,7 +91,7 @@ export default function SeatTeaser() {
       {/* Foreground UI overlay */}
       <div 
         ref={textRef}
-        className="relative z-10 w-full max-w-7xl mx-auto px-6 pointer-events-none mt-[40vh] md:mt-0 flex flex-col items-center md:items-start text-center md:text-left"
+        className="relative z-10 w-full max-w-7xl mx-auto px-6 pointer-events-none mt-[60vh] md:mt-0 flex flex-col items-center md:items-start text-center md:text-left"
       >
         <h2 className="font-display font-bold text-4xl sm:text-6xl md:text-7xl uppercase tracking-tighter leading-tight">
           Visual. <br />

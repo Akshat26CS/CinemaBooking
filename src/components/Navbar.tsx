@@ -33,6 +33,8 @@ export default function Navbar() {
   // Location state
   const [location, setLocation] = useState(() => localStorage.getItem("userLocation") || "New York");
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const searchRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -217,7 +219,10 @@ export default function Navbar() {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-4 md:gap-6">
-          <button className="lg:hidden text-brand-slate hover:text-white">
+          <button 
+            onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+            className="lg:hidden text-brand-slate hover:text-white"
+          >
             <Search className="w-5 h-5" />
           </button>
           
@@ -324,11 +329,110 @@ export default function Navbar() {
             </button>
           )}
           
-          <button className="sm:hidden text-brand-slate hover:text-white">
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="sm:hidden text-brand-slate hover:text-white"
+          >
             <Menu className="w-6 h-6" />
           </button>
         </div>
       </div>
+
+      {/* Mobile Search Overlay */}
+      <AnimatePresence>
+        {isMobileSearchOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="lg:hidden bg-black/95 border-b border-white/10 w-full overflow-hidden absolute top-full left-0"
+          >
+            <div className="p-4 border-t border-white/5">
+              <input
+                type="text"
+                placeholder="Search movies, formats, genres..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                autoFocus
+                className="w-full bg-white/10 border border-white/20 rounded-full py-3 px-6 text-white placeholder:text-brand-slate/50 focus:outline-none focus:border-brand-indigo/50 focus:bg-white/15 transition-all"
+              />
+              {searchQuery && (
+                <div className="mt-4 max-h-60 overflow-y-auto rounded-xl bg-white/5 border border-white/10">
+                  {searchResults.length > 0 ? (
+                    searchResults.map(movie => (
+                      <div 
+                        key={movie.id} 
+                        className="p-3 border-b border-white/5 text-white text-sm cursor-pointer hover:bg-white/10 flex items-center gap-3"
+                        onClick={() => {
+                          setIsMobileSearchOpen(false);
+                          setSearchQuery("");
+                          setBooking({
+                            ...INITIAL_BOOKING,
+                            step: "details",
+                            movie
+                          });
+                        }}
+                      >
+                        <img src={movie.image} alt={movie.title} className="w-8 h-12 object-cover rounded" />
+                        <div>
+                          <div className="font-medium">{movie.title}</div>
+                          <div className="text-xs text-brand-slate">{movie.genres.join(", ")}</div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-brand-slate text-sm">No results found for "{searchQuery}"</div>
+                  )}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Hamburger Menu */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="sm:hidden bg-black/95 border-b border-white/10 w-full overflow-hidden absolute top-full left-0"
+          >
+            <div className="p-4 flex flex-col border-t border-white/5">
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  gsap.to(window, { duration: 1, scrollTo: "#premium-formats", ease: "power3.inOut" });
+                }}
+                className="text-left py-4 text-white font-medium border-b border-white/5 text-lg"
+              >
+                Premium Formats
+              </button>
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  gsap.to(window, { duration: 1, scrollTo: "#seat-teaser", ease: "power3.inOut" });
+                }}
+                className="text-left py-4 text-white font-medium border-b border-white/5 text-lg"
+              >
+                Experience
+              </button>
+              {!currentUser && (
+                <button 
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsAuthOpen(true);
+                  }}
+                  className="text-left py-4 text-brand-indigo font-medium text-lg"
+                >
+                  Sign In
+                </button>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <BookingFlow booking={booking} setBooking={setBooking} />
 
