@@ -52,6 +52,21 @@ export default function MyBookingsModal({ isOpen, onClose, token }: MyBookingsMo
     return () => { isMounted = false; };
   }, [isOpen, token]);
 
+  // Lock scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
