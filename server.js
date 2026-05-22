@@ -1084,8 +1084,11 @@ async function start() {
   }
 }
 
-// Start server locally, but skip app.listen if running in Vercel
-if (!process.env.VERCEL) {
+import { fileURLToPath } from 'url';
+const isMain = process.argv[1] === fileURLToPath(import.meta.url);
+
+// Start server locally if executed directly (node server.js)
+if (isMain) {
   start();
 }
 
